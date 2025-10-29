@@ -19,8 +19,13 @@ type Calculation struct {
 type CalculationRequest struct { //структура, отвечающая за вычисления
 	Expression string `json:"expression"`
 }
+type requestBody struct {
+	Task string `json:"task"`
+}
 
 var calculations = []Calculation{} //инициализированный слайс
+var task string
+
 func calculateExpression(expression string) (string, error) { //функция, для вычисления
 	expr, err := govaluate.NewEvaluableExpression(expression) //создание выражения для подсчета
 	if err != nil {
@@ -34,7 +39,8 @@ func calculateExpression(expression string) (string, error) { //функция, 
 
 }
 func getCalculations(c echo.Context) error {
-	return c.JSON(http.StatusOK, calculations)
+	response := fmt.Sprintf("%v", task)
+	return c.String(http.StatusOK, response)
 }
 func postCalculations(c echo.Context) error {
 	var req CalculationRequest

@@ -16,11 +16,12 @@ type Calculation struct {
 	Expression string `json:"expression"`
 	Result     string `json:"result"`
 }
-type requestBody struct {
-	Task string `json:"task"`
-}
+
 type CalculationRequest struct { //структура, отвечающая за вычисления
 	Expression string `json:"expression"`
+}
+type requestBody struct {
+	Task string `json:"task"`
 }
 
 var calculations = []Calculation{} //инициализированный слайс
@@ -40,7 +41,7 @@ func calculateExpression(expression string) (string, error) { //функция, 
 }
 func getCalculations(c echo.Context) error {
 
-	return c.JSON(http.StatusOK, calculations)
+	return c.String(http.StatusOK, "hello, "+task)
 }
 func postCalculations(c echo.Context) error {
 	var req CalculationRequest
@@ -67,21 +68,17 @@ func postTask(c echo.Context) error {
 	}
 	task = reqBody.Task
 	return c.JSON(http.StatusOK, map[string]string{
-		"message": "Task saved successfully",
+		"message": "Task received successfully",
 		"task":    task,
 	})
-}
-func getHandler(c echo.Context) error {
-	return c.String(http.StatusOK, "hello "+task)
 }
 
 func main() {
 	e := echo.New()
 	e.Use(middleware.CORS())
 	e.Use(middleware.Logger())
-	e.GET("/calculations", getCalculations)
-	e.GET("/", getHandler)
-	e.POST("/task", postTask)
+	e.GET("/task", getCalculations)
 	e.POST("/calculations", postCalculations)
+	e.POST("/task", postTask)
 	e.Start("localhost:8080")
 }
